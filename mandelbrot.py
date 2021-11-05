@@ -6,8 +6,10 @@ import numpy as np
 
 
 iterations = 200
+power = 4
 seedVal = 0
-size = 600
+constVal = -  0.4 - 0.4j
+size = 1000
 
 def get_equation(const, power = 2, iterations = 25):
   def iterated_equation(x, remaining_iterations):
@@ -21,21 +23,41 @@ def get_equation(const, power = 2, iterations = 25):
   return lambda x: iterated_equation(x, iterations)
 
 def is_equation_bounded(equation, inVal):
-  return abs(equation(inVal)) <= 2
+  return abs(equation(inVal)) <= max(abs(inVal), 2)
 
-pixelMap = np.zeros((size, 2*size), dtype=np.uint8)
-row = 0
-for x in np.linspace(-2, 1, 2*size):
-  col = 0
-  for y in np.linspace(-1, 1, size):
-    equation = get_equation(complex(x, y), power=2, iterations=iterations)
-    if is_equation_bounded(equation, seedVal):
-      pixelMap[col][row] = 1
-    col += 1
-  row += 1
+def compute_mandelbrot_set():
+  pixelMap = np.zeros((size, 2*size), dtype=np.uint8)
+  row = 0
+  for x in np.linspace(-2, 1, 2*size):
+    col = 0
+    for y in np.linspace(-1, 1, size):
+      equation = get_equation(complex(x, y), power=power, iterations=iterations)
+      if is_equation_bounded(equation, seedVal):
+        pixelMap[col][row] = 1
+      col += 1
+    row += 1
 
-image = Image.fromarray(pixelMap * 255)
+  return pixelMap
+
+def compute_julia_set(const):
+  pixelMap = np.zeros((size, size), dtype=np.uint8)
+  row = 0
+  for x in np.linspace(-2, 2, size):
+    col = 0
+    for y in np.linspace(-2, 2, size):
+      equation = get_equation(const, power=power, iterations=iterations)
+      if is_equation_bounded(equation, complex(x, y)):
+        pixelMap[col][row] = 1
+      col += 1
+    row += 1
+
+  return pixelMap
+
+
+# image = Image.fromarray(compute_mandelbrot_set() * 255)
+# image.show()
+# image.save(f"images/mandelbrot-i{iterations}-s{seedVal}-p{power}.png")
+
+image = Image.fromarray(compute_julia_set(constVal) * 255)
 image.show()
-image.save(f"images/mandelbrot-i{iterations}-s{seedVal}.png")
-
-print(f"{np.count_nonzero(pixelMap)}/{size * size}")
+image.save(f"images/julia-i{iterations}-c{constVal}-p{power}.png")
