@@ -34,9 +34,8 @@ for x in np.linspace(-2, 1, 2*size):
     col += 1
   row += 1
 
-image = Image.fromarray(pixelMap * 255)#.resize((500, 500))
+image = Image.fromarray(pixelMap * 255)
 image.show()
+image.save(f"images/mandelbrot-i{iterations}-s{seedVal}.png")
 
-imMap = np.asarray(image)
 print(f"{np.count_nonzero(pixelMap)}/{size * size}")
-print(f"{np.count_nonzero(imMap)}/{size * size}")
