@@ -8,7 +8,7 @@ import numpy as np
 iterations = 200
 power = 4
 seedVal = 0
-constVal = -  0.4 - 0.4j
+constVal = -1
 size = 1000
 
 def get_equation(const, power = 2, iterations = 25):
