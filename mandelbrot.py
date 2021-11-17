@@ -1,13 +1,11 @@
-import cmath
-import sys
 import matplotlib.pyplot as plt
 import PIL.Image as Image
 import numpy as np
-
+from pathlib import Path
 
 iterations = 200
 power = 2
-seedVal = 1
+seedVal = 0
 constVal = -0.1 + 0.89j
 size = 1000
 
@@ -68,7 +66,7 @@ def make_mandelbrot_image(show=True, filename=None):
     image.show()
   image.save(filename)
 
-def make_julia_image(show=True, filename=None):
+def make_julia_image(constVal, show=True, filename=None):
   if not filename:
     filename = f"images/julia-i{iterations}-c{constVal}-p{power}.png"
 
@@ -78,13 +76,15 @@ def make_julia_image(show=True, filename=None):
   image.save(filename)
 
 def make_julia_sets_along_path(path, path_name, steps=100):
+  Path(path_name).mkdir(parents=True, exist_ok=False)
+
   for t in np.linspace(0, 1, steps):
-    print(f"Time {t}")
-    make_julia_image(show=False, filename=f"{path_name}/t{t}.png")
+    print(f"Time {5:05d}")
+    make_julia_image(path(t), show=False, filename=f"{path_name}/{t:05d}.png")
 
 
 # make_mandelbrot_image()
-# make_julia_image()
+# make_julia_image(constVal)
 make_julia_sets_along_path(linear_path(-0.1+0.5j, -0.1+0.9j), "(-0.1+0.5j)lin(-0.1+0.9j)-30s", 30)
 
 
