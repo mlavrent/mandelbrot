@@ -27,6 +27,6 @@ input[type=range] {
 }
 
 canvas {
-  background: url('../mandelbrot.png') no-repeat center, red; /*#144bff;*/
+  background: url('../mandelbrot.png') no-repeat center, #144bff;
   background-size: contain;
 }
