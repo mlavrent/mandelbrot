@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Mark Lavrentyev">
+  <title>Mandelbrot set explorer</title>
+  <link rel="icon" type="image/x-icon" href="favicon.png" />
+  <link rel="stylesheet" type="text/css" href="css/main.css" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css"
+    integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+  <script src="js/main.js"></script>
+</head>
+<body>
+  <div id="main">
+    <div id="controls">
+      <div class="control">
+        <label for="iterControl">Iterations</label>
+        <input type="range" id="iterControl" min="0" max="20" />
+      </div>
+      <div class="control">
+        <label for="windowBL">Bottom left</label>
+        <input type="text" id="windowBL" />
+      </div>
+      <div class="control">
+        <label for="windowTR">Top right</label>
+        <input type="text" id="windowTR" />
+      </div>
+    </div>
+    <div id="imageFrame">
+      <canvas id="image"></canvas>
+    </div>
+  </div>
+</body>
+</html>
