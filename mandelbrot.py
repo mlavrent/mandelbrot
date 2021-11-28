@@ -7,7 +7,7 @@ iterations = 250
 power = 2
 seedVal = 0
 constVal = -0.9728 - 0.1770j
-size = 1500
+size = 4000
 
 def get_equation(const, power = 2, iterations = 25):
   def iterated_equation(x, remaining_iterations):
@@ -35,6 +35,7 @@ def compute_mandelbrot_set():
   pixelMap = np.zeros((size, 3*size//2, 3), dtype=np.uint8)
   row = 0
   for x in np.linspace(-2, 1, 3*size//2):
+    print(f"x: {x} ∈ [-2, 1]")
     col = 0
     for y in np.linspace(-1, 1, size):
       equation = get_equation(complex(x, y), power=power, iterations=iterations)
@@ -86,8 +87,8 @@ def make_julia_sets_along_path(path, path_name, steps=100):
     make_julia_image(path(t), show=False, filename=f"{path_name}/{t:05d}.png")
 
 
-# make_mandelbrot_image()
-make_julia_image(constVal)
+make_mandelbrot_image()
+# make_julia_image(constVal)
 # make_julia_sets_along_path(linear_path(-0.1+0.5j, -0.1+0.9j), "(-0.1+0.5j)lin(-0.1+0.9j)-30s", 30)
 
 
