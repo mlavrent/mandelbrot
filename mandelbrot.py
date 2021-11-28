@@ -3,11 +3,11 @@ import PIL.Image as Image
 import numpy as np
 from pathlib import Path
 
-iterations = 200
+iterations = 250
 power = 2
 seedVal = 0
-constVal = -0.1 + 0.89j
-size = 1000
+constVal = -0.9728 - 0.1770j
+size = 1500
 
 def get_equation(const, power = 2, iterations = 25):
   def iterated_equation(x, remaining_iterations):
@@ -20,13 +20,16 @@ def get_equation(const, power = 2, iterations = 25):
 
   return lambda x: iterated_equation(x, iterations)
 
-def escape_speed(equation, inVal, hue=160, val=255):
+def escape_speed(equation, inVal, bw=False, hue=160, val=255):
   result, quitTime = equation(inVal)
 
   if (abs(result) <= max(abs(inVal), 4)):
     return 0, 0, 0
   else:
-    return hue, int(255 * (quitTime/iterations) ** 4), val
+    if bw:
+      return hue, 0, int(255 * (quitTime/iterations) ** 4)
+    else:
+      return hue, int(255 * (quitTime/iterations) ** 4), val
 
 def compute_mandelbrot_set():
   pixelMap = np.zeros((size, 3*size//2, 3), dtype=np.uint8)
@@ -48,7 +51,7 @@ def compute_julia_set(const):
     col = 0
     for y in np.linspace(-2, 2, size):
       equation = get_equation(const, power=power, iterations=iterations)
-      pixelMap[col][row] = escape_speed(equation, complex(x, y), hue=17, val=200)
+      pixelMap[col][row] = escape_speed(equation, complex(x, y), bw=True, hue=17, val=200)
       col += 1
     row += 1
 
@@ -84,8 +87,8 @@ def make_julia_sets_along_path(path, path_name, steps=100):
 
 
 # make_mandelbrot_image()
-# make_julia_image(constVal)
-make_julia_sets_along_path(linear_path(-0.1+0.5j, -0.1+0.9j), "(-0.1+0.5j)lin(-0.1+0.9j)-30s", 30)
+make_julia_image(constVal)
+# make_julia_sets_along_path(linear_path(-0.1+0.5j, -0.1+0.9j), "(-0.1+0.5j)lin(-0.1+0.9j)-30s", 30)
 
 
 
