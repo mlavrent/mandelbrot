@@ -1,12 +1,15 @@
 
 body {
   font-family: 'Roboto';
+  margin: 0;
+  overflow-x: hidden;
 }
 
 #controls {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  margin: 10px 0;
 }
 
 .control {
@@ -21,4 +24,9 @@ body {
 
 input[type=range] {
   width: 300px;
+}
+
+canvas {
+  background: url('../mandelbrot.png') no-repeat;
+  background-size: cover;
 }
