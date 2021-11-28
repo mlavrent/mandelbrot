@@ -1,21 +1,44 @@
 const xMin = -2;
 const xMax = 1;
 const yMin = -1;
-const yMax = 1
+const yMax = 1;
+
+const aspectRatio = (xMax - xMin) / (yMax - yMin);
+
+function getTLOffset(canvas) {
+  const canvasAspectRatio = canvas.width / canvas.height;
+
+  if (canvasAspectRatio >= aspectRatio) {
+    // padding at left and right, heights match
+    const actualImgWidth = canvas.height * aspectRatio;
+    return [(canvas.width - actualImgWidth) / 2, 0];
+  } else {
+    // padding at top and bottom, widths match
+    const actualImgHeight = canvas.width / aspectRatio;
+    return [0, (canvas.height - actualImgHeight) / 2];
+  }
+}
 
 // TODO: coordinate conversion has problems when we have blue margins
 function pixToCoords(xPix, yPix, canvas) {
-  const xReal = (xPix / canvas.width) * (xMax - xMin) + xMin;
-  const yReal = yMax - (yPix / canvas.height) * (yMax - yMin);
+  const offset = getTLOffset(canvas);
+
+  xPix -= offset[0];
+  yPix -= offset[1];
+
+  const xReal = (xPix / (canvas.width - 2 * offset[0])) * (xMax - xMin) + xMin;
+  const yReal = yMax - (yPix / (canvas.height - 2 * offset[1])) * (yMax - yMin);
 
   return [xReal, yReal];
 }
 
 function coordsToPix(xCoord, yCoord, canvas) {
-  const xPix = (xCoord - xMin) * canvas.width / (xMax - xMin);
-  const yPix = (yMax - yCoord) * canvas.height / (yMax - yMin);
+  const offset = getTLOffset(canvas);
 
-  return [xPix, yPix];
+  const xPix = (xCoord - xMin) * (canvas.width - 2 * offset[0]) / (xMax - xMin);
+  const yPix = (yMax - yCoord) * (canvas.height - 2 * offset[1]) / (yMax - yMin);
+
+  return [xPix + offset[0], yPix + offset[1]];
 }
 
 function computePoints(c, iterations) {
@@ -121,6 +144,7 @@ window.onload = (event) => {
   let isDragging = false;
   canvas.onmousedown = (event) => {
     isDragging = true;
+    console.log(`${event.offsetX}, ${event.offsetY}`);
   }
   canvas.onmousemove = (event) => {
     if (isDragging) {
