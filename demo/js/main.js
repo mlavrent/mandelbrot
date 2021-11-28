@@ -32,8 +32,8 @@ function computePoints(c, iterations) {
   return points;
 }
 
-function drawCircle(xPix, yPix, radius, transparency, context) {
-  context.fillStyle = `rgba(255, 38, 38, ${transparency})`;
+function drawCircle(xPix, yPix, radius, transparency, context, colorOverride=null) {
+  context.fillStyle = colorOverride ?? `rgba(255, 38, 38, ${transparency})`;
 
   context.beginPath();
   context.arc(xPix, yPix, radius, 0, 2 * Math.PI, true);
@@ -59,7 +59,7 @@ function renderPoints(c, points, canvas, context) {
   clearCanvas(canvas, context);
   // render c
   const pix = coordsToPix(c.re, c.im, canvas);
-  drawCircle(pix[0], pix[1], 15, 0.5, context);
+  drawCircle(pix[0], pix[1], 15, 0.6, context, "rgba(255, 102, 0, 0.6)");
 
   // render each point in our list
   let prevPt = coordsToPix(0, 0, canvas);
@@ -71,15 +71,27 @@ function renderPoints(c, points, canvas, context) {
   }
 }
 
+function dist(x1, y1, x2, y2) {
+  return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+}
+
 window.onload = (event) => {
   const canvas = document.querySelector('canvas');
   const context = canvas.getContext('2d');
 
   const iterControl = document.querySelector('#iterControl');
+  const cControl = document.querySelector('#cControl');
 
   // set up values to keep track of
   let c = { re: -0.5, im: 0.3 };
   let points = computePoints(c, iterControl.value);
+
+  function setC(newVal) {
+    c = newVal;
+    cControl.value = `${c.re.toFixed(3)} + ${c.im.toFixed(3)}i`;
+    points = computePoints(c, iterControl.value);
+  }
+  setC(c);
 
   // set width and height of the canvas
   window.onresize = (_) => {
@@ -96,6 +108,15 @@ window.onload = (event) => {
     renderPoints(c, points, canvas, context);
   }
 
+  // rendering for typing in new c value
+  cControl.onchange = () => {
+    const regex = /^([+-]?\d*\.?\d*) ?\+ ?([+-]?\d*\.?\d*)i$/gm;
+    const match = regex.exec(cControl.value);
+    console.log(match);
+    setC({ re: parseFloat(match[0]), im: parseFloat(match[1]), });
+    renderPoints(c, points, canvas, context);
+  }
+
   // rendering for dragging c around
   let isDragging = false;
   canvas.onmousedown = (event) => {
@@ -104,8 +125,7 @@ window.onload = (event) => {
   canvas.onmousemove = (event) => {
     if (isDragging) {
       const coords = pixToCoords(event.offsetX, event.offsetY, canvas);
-      c = { re: coords[0], im: coords[1] };
-      points = computePoints(c, iterControl.value);
+      setC({ re: coords[0], im: coords[1] });
       renderPoints(c, points, canvas, context);
     }
   }
@@ -113,12 +133,8 @@ window.onload = (event) => {
     isDragging = false;
 
     const coords = pixToCoords(event.offsetX, event.offsetY, canvas);
-    c = { re: coords[0], im: coords[1] };
-    points = computePoints(c, iterControl.value);
+    setC({ re: coords[0], im: coords[1] });
     renderPoints(c, points, canvas, context);
-  }
-  canvas.onmouseover = (event) => {
-
   }
 }
 
