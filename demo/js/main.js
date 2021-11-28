@@ -3,7 +3,7 @@ const xMax = 1;
 const yMin = -1;
 const yMax = 1
 
-
+// TODO: coordinate conversion has problems when we have blue margins
 function pixToCoords(xPix, yPix, canvas) {
   const xReal = (xPix / canvas.width) * (xMax - xMin) + xMin;
   const yReal = yMax - (yPix / canvas.height) * (yMax - yMin);
@@ -90,17 +90,35 @@ window.onload = (event) => {
   window.onresize(null);
   renderPoints(c, points, canvas, context);
 
-  // set up onclick event for canvas
-  // canvas.onclick = (event) => {
-  //   console.log(`Canvas clicked at ${event.offsetX}, ${event.offsetY}`)
-  //   const realCoords = pixToCoords(event.offsetX, event.offsetY, canvas);
-  //   console.log(`Real coords: ${realCoords[0]}, ${realCoords[1]}`)
-  // }
-
-  // set up re-rendering for when iterations changes
+  // rendering for when iterations changes
   iterControl.oninput = () => {
     points = computePoints(c, iterControl.value);
     renderPoints(c, points, canvas, context);
+  }
+
+  // rendering for dragging c around
+  let isDragging = false;
+  canvas.onmousedown = (event) => {
+    isDragging = true;
+  }
+  canvas.onmousemove = (event) => {
+    if (isDragging) {
+      const coords = pixToCoords(event.offsetX, event.offsetY, canvas);
+      c = { re: coords[0], im: coords[1] };
+      points = computePoints(c, iterControl.value);
+      renderPoints(c, points, canvas, context);
+    }
+  }
+  canvas.onmouseup = (event) => {
+    isDragging = false;
+
+    const coords = pixToCoords(event.offsetX, event.offsetY, canvas);
+    c = { re: coords[0], im: coords[1] };
+    points = computePoints(c, iterControl.value);
+    renderPoints(c, points, canvas, context);
+  }
+  canvas.onmouseover = (event) => {
+
   }
 }
 
