@@ -6,8 +6,10 @@ from pathlib import Path
 iterations = 250
 power = 2
 seedVal = 0
-constVal = -0.9728 - 0.1770j
-size = 4000
+# constVal = 0.31242484969939843 - 0.009118236472945851j
+# constVal = 0.2311422527672531 - 0.54839679j
+constVal = -0.7713426853707417 + 0.1836673346693387j
+size = 1500
 
 def get_equation(const, power = 2, iterations = 25):
   def iterated_equation(x, remaining_iterations):
@@ -27,9 +29,9 @@ def escape_speed(equation, inVal, bw=False, hue=160, val=255):
     return 0, 0, 0
   else:
     if bw:
-      return hue, 0, int(255 * (quitTime/iterations) ** 4)
+      return hue, 0, int(255 * (quitTime/iterations) ** 10)
     else:
-      return hue, int(255 * (quitTime/iterations) ** 4), val
+      return hue, int(255 * (quitTime/iterations) ** 10), val
 
 def compute_mandelbrot_set():
   pixelMap = np.zeros((size, 3*size//2, 3), dtype=np.uint8)
@@ -52,7 +54,7 @@ def compute_julia_set(const):
     col = 0
     for y in np.linspace(-2, 2, size):
       equation = get_equation(const, power=power, iterations=iterations)
-      pixelMap[col][row] = escape_speed(equation, complex(x, y), bw=True, hue=17, val=200)
+      pixelMap[col][row] = escape_speed(equation, complex(x, y), bw=False, hue=17, val=200)
       col += 1
     row += 1
 
@@ -63,7 +65,7 @@ def linear_path(start, end):
 
 def make_mandelbrot_image(show=True, filename=None):
   if not filename:
-      filename = f"images/mandelbrot-i{iterations}-s{seedVal}-p{power}.png"
+      filename = f"image-generator/images/mandelbrot-i{iterations}-s{seedVal}-p{power}.png"
 
   image = Image.fromarray(compute_mandelbrot_set(), mode="HSV").convert("RGB")
   if show:
@@ -72,7 +74,7 @@ def make_mandelbrot_image(show=True, filename=None):
 
 def make_julia_image(constVal, show=True, filename=None):
   if not filename:
-    filename = f"images/julia-i{iterations}-c{constVal}-p{power}.png"
+    filename = f"image-generator/images/julia-i{iterations}-c{constVal}-p{power}.png"
 
   image = Image.fromarray(compute_julia_set(constVal), mode="HSV").convert("RGB")
   if show:
@@ -87,8 +89,8 @@ def make_julia_sets_along_path(path, path_name, steps=100):
     make_julia_image(path(t), show=False, filename=f"{path_name}/{t:05d}.png")
 
 
-make_mandelbrot_image()
-# make_julia_image(constVal)
+# make_mandelbrot_image()
+make_julia_image(constVal)
 # make_julia_sets_along_path(linear_path(-0.1+0.5j, -0.1+0.9j), "(-0.1+0.5j)lin(-0.1+0.9j)-30s", 30)
 
 
